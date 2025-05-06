@@ -1,51 +1,123 @@
-<!DOCTYPE html>
-<html lang="hi">
+<!DOCTYPE html><html lang="hi">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>भारत स्टॉक Live</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .loader {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body class="bg-gray-100 text-gray-900">
-
   <header class="bg-blue-900 text-white p-4 text-center">
     <h1 class="text-3xl font-bold">भारत स्टॉक Live</h1>
     <p class="text-sm">स्टॉक मार्केट की ताज़ा खबरें, FII/DII डेटा, म्यूचुअल फंड्स अपडेट</p>
-  </header>
+  </header>  <main class="p-4 space-y-6 max-w-6xl mx-auto"><!-- स्टॉक न्यूज़ सेक्शन -->
+<section class="bg-white rounded-xl shadow p-4">
+  <h2 class="text-xl font-semibold text-green-700 mb-2">ताज़ा स्टॉक न्यूज़</h2>
+  <div id="news" class="space-y-2">
+    <div class="loader"></div>
+  </div>
+</section>
 
-  <main class="p-4 space-y-6 max-w-5xl mx-auto">
+<!-- FII/DII डेटा सेक्शन -->
+<section class="bg-white rounded-xl shadow p-4">
+  <h2 class="text-xl font-semibold text-indigo-700 mb-2">FII / DII गतिविधि</h2>
+  <pre id="fii-dii">डेटा लोड हो रहा है...</pre>
+</section>
 
-    <section class="bg-white rounded-xl shadow p-4">
-      <h2 class="text-xl font-semibold text-green-700 mb-2">स्टॉक मार्केट ताज़ा खबरें</h2>
-      <p>यहाँ भारत के प्रमुख स्टॉक्स से जुड़ी खबरें स्वतः अपडेट होती रहेंगी।</p>
-    </section>
+<!-- टॉप गेनर्स और लूज़र्स -->
+<section class="bg-white rounded-xl shadow p-4">
+  <h2 class="text-xl font-semibold text-red-700 mb-2">टॉप गेनर्स और लूज़र्स</h2>
+  <ul id="gainers" class="list-disc ml-5 text-green-700"></ul>
+  <ul id="losers" class="list-disc ml-5 text-red-700 mt-2"></ul>
+</section>
 
-    <section class="bg-white rounded-xl shadow p-4">
-      <h2 class="text-xl font-semibold text-indigo-700 mb-2">FII / DII गतिविधि</h2>
-      <p>रोज़ाना निवेश डेटा, FII और DII की खरीद-बिक्री का विश्लेषण।</p>
-    </section>
+<!-- लाइव चार्ट और सर्च -->
+<section class="bg-white rounded-xl shadow p-4">
+  <h2 class="text-xl font-semibold text-yellow-700 mb-2">लाइव चार्ट (ट्रेडिंग व्यू)</h2>
+  <input type="text" id="stockSymbol" placeholder="उदाहरण: RELIANCE" class="border p-2 rounded w-full mb-4"/>
+  <div id="tradingview" class="rounded overflow-hidden">
+    <!-- चार्ट यहाँ आएगा -->
+  </div>
+</section>
 
-    <section class="bg-white rounded-xl shadow p-4">
-      <h2 class="text-xl font-semibold text-red-700 mb-2">टॉप गेनर्स और लूज़र्स</h2>
-      <p>हर दिन के टॉप प्रदर्शन करने वाले और गिरने वाले स्टॉक्स की सूची।</p>
-    </section>
-
-    <section class="bg-white rounded-xl shadow p-4">
-      <h2 class="text-xl font-semibold text-yellow-700 mb-2">म्यूचुअल फंड गतिविधि</h2>
-      <p>किन स्टॉक्स में म्यूचुअल फंड्स कर रहे हैं निवेश - लाइव अपडेट्स।</p>
-    </section>
-
-    <div class="text-center mt-6">
-      <button class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
-        और खबरें देखें
-      </button>
-    </div>
-
-  </main>
-
-  <footer class="bg-blue-900 text-white text-center p-4 mt-8 text-sm">
+  </main>  <footer class="bg-blue-900 text-white text-center p-4 mt-8 text-sm">
     © 2025 भारत स्टॉक Live | सभी अधिकार सुरक्षित
-  </footer>
+  </footer>  <script>
+    const newsAPIKey = "67d561d059ee4d70b69ebcc709bb42d6"; // आपकी API Key यहाँ लगाई गई है
+    const stockNewsUrl = `https://newsapi.org/v2/everything?q=indian+stock+market&language=en&sortBy=publishedAt&apiKey=${newsAPIKey}`;
 
-</body>
+    async function loadNews() {
+      const res = await fetch(stockNewsUrl);
+      const data = await res.json();
+      const container = document.getElementById("news");
+      container.innerHTML = "";
+      data.articles.slice(0, 5).forEach(article => {
+        const item = document.createElement("div");
+        item.innerHTML = `<a href="${article.url}" target="_blank" class="text-blue-600 underline">${article.title}</a>`;
+        container.appendChild(item);
+      });
+    }
+
+    async function loadFiiDii() {
+      // Placeholder (स्क्रैपिंग या API से डेटा लेना होगा)
+      document.getElementById("fii-dii").textContent = `FII: ₹3200 Cr खरीदी\nDII: ₹2200 Cr बिक्री (उदाहरण डेटा)`;
+    }
+
+    async function loadGainersLosers() {
+      const url = "https://financialmodelingprep.com/api/v3/stock_market/gainers?apikey=demo";
+      const res = await fetch(url);
+      const gainers = await res.json();
+      const losersRes = await fetch("https://financialmodelingprep.com/api/v3/stock_market/losers?apikey=demo");
+      const losers = await losersRes.json();
+
+      const gainersEl = document.getElementById("gainers");
+      const losersEl = document.getElementById("losers");
+
+      gainers.slice(0, 5).forEach(stock => {
+        const li = document.createElement("li");
+        li.textContent = `${stock.name} (${stock.symbol}) +${stock.changesPercentage}`;
+        gainersEl.appendChild(li);
+      });
+
+      losers.slice(0, 5).forEach(stock => {
+        const li = document.createElement("li");
+        li.textContent = `${stock.name} (${stock.symbol}) ${stock.changesPercentage}`;
+        losersEl.appendChild(li);
+      });
+    }
+
+    function loadChart(symbol = "RELIANCE") {
+      const container = document.getElementById("tradingview");
+      container.innerHTML = `<iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_b&symbol=NSE%3A${symbol}&interval=D&symboledit=1&toolbarbg=f1f3f6&studies=[]&theme=light&style=1&locale=in&enable_publishing=false&allow_symbol_change=true&details=true&hotlist=true" style="width:100%; height:400px;"></iframe>`;
+    }
+
+    document.getElementById("stockSymbol").addEventListener("change", e => {
+      loadChart(e.target.value);
+    });
+
+    // Auto refresh every 10 min
+    loadNews();
+    loadFiiDii();
+    loadGainersLosers();
+    loadChart();
+    setInterval(() => {
+      loadNews();
+      loadFiiDii();
+      loadGainersLosers();
+    }, 600000);
+  </script></body>
 </html>
