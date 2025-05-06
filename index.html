@@ -1,123 +1,165 @@
 <!DOCTYPE html><html lang="hi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>भारत स्टॉक Live</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    .loader {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #3498db;
-      border-radius: 50%;
-      width: 30px;
-      height: 30px;
-      animation: spin 1s linear infinite;
-      margin: auto;
+    .ticker {
+      overflow: hidden;
+      position: relative;
+      background: #1e3a8a;
+      color: white;
+      height: 40px;
     }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    .ticker-content {
+      display: inline-block;
+      white-space: nowrap;
+      padding-left: 100%;
+      animation: ticker 30s linear infinite;
+    }
+    @keyframes ticker {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
     }
   </style>
 </head>
 <body class="bg-gray-100 text-gray-900">
-  <header class="bg-blue-900 text-white p-4 text-center">
+  <div class="ticker">
+    <div id="tickerText" class="ticker-content">लोड हो रहा है...</div>
+  </div>  <header class="bg-blue-900 text-white p-4 text-center">
     <h1 class="text-3xl font-bold">भारत स्टॉक Live</h1>
-    <p class="text-sm">स्टॉक मार्केट की ताज़ा खबरें, FII/DII डेटा, म्यूचुअल फंड्स अपडेट</p>
-  </header>  <main class="p-4 space-y-6 max-w-6xl mx-auto"><!-- स्टॉक न्यूज़ सेक्शन -->
+    <p class="text-sm">हिंदी में ताज़ा स्टॉक न्यूज़ + टॉप गेनर/लूज़र + लाइव चार्ट</p>
+  </header>  <main class="p-4 space-y-6 max-w-6xl mx-auto">
+    <!-- Hindi Stock News Feeds -->
+    <section class="bg-white rounded-xl shadow p-4">
+      <h2 class="text-xl font-semibold text-green-700 mb-4">ताज़ा खबरें (हिंदी)</h2>
+      <div id="feeds" class="space-y-4">
+        <div class="text-gray-600">लोड हो रहा है...</div>
+      </div>
+    </section><!-- Top Gainers and Losers -->
 <section class="bg-white rounded-xl shadow p-4">
-  <h2 class="text-xl font-semibold text-green-700 mb-2">ताज़ा स्टॉक न्यूज़</h2>
-  <div id="news" class="space-y-2">
-    <div class="loader"></div>
+  <h2 class="text-xl font-semibold text-indigo-700 mb-4">टॉप गेनर और लूज़र (NSE)</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <h3 class="text-lg font-bold text-green-600 mb-2">Top Gainers</h3>
+      <ul id="gainers" class="list-disc list-inside text-sm text-gray-800">लोड हो रहा है...</ul>
+    </div>
+    <div>
+      <h3 class="text-lg font-bold text-red-600 mb-2">Top Losers</h3>
+      <ul id="losers" class="list-disc list-inside text-sm text-gray-800">लोड हो रहा है...</ul>
+    </div>
   </div>
 </section>
 
-<!-- FII/DII डेटा सेक्शन -->
+<!-- Stock Chart -->
 <section class="bg-white rounded-xl shadow p-4">
-  <h2 class="text-xl font-semibold text-indigo-700 mb-2">FII / DII गतिविधि</h2>
-  <pre id="fii-dii">डेटा लोड हो रहा है...</pre>
-</section>
-
-<!-- टॉप गेनर्स और लूज़र्स -->
-<section class="bg-white rounded-xl shadow p-4">
-  <h2 class="text-xl font-semibold text-red-700 mb-2">टॉप गेनर्स और लूज़र्स</h2>
-  <ul id="gainers" class="list-disc ml-5 text-green-700"></ul>
-  <ul id="losers" class="list-disc ml-5 text-red-700 mt-2"></ul>
-</section>
-
-<!-- लाइव चार्ट और सर्च -->
-<section class="bg-white rounded-xl shadow p-4">
-  <h2 class="text-xl font-semibold text-yellow-700 mb-2">लाइव चार्ट (ट्रेडिंग व्यू)</h2>
-  <input type="text" id="stockSymbol" placeholder="उदाहरण: RELIANCE" class="border p-2 rounded w-full mb-4"/>
-  <div id="tradingview" class="rounded overflow-hidden">
-    <!-- चार्ट यहाँ आएगा -->
-  </div>
+  <h2 class="text-xl font-semibold text-blue-700 mb-4">स्टॉक चार्ट (TradingView)</h2>
+  <select id="stockDropdown" class="border p-2 rounded w-full mb-4">
+    <option value="NSE:TATAMOTORS">TATA MOTORS</option>
+    <option value="NSE:RELIANCE">RELIANCE</option>
+    <option value="NSE:INFY">INFOSYS</option>
+    <option value="NSE:TCS">TCS</option>
+    <option value="NSE:HDFCBANK">HDFC BANK</option>
+    <option value="NSE:ITC">ITC</option>
+    <option value="NSE:SBIN">SBI</option>
+    <option value="NSE:AXISBANK">AXIS BANK</option>
+    <option value="NSE:BAJFINANCE">BAJAJ FINANCE</option>
+    <option value="NSE:WIPRO">WIPRO</option>
+  </select>
+  <button onclick="loadChart()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">चार्ट लोड करें</button>
+  <div id="chartContainer" class="mt-4"></div>
 </section>
 
   </main>  <footer class="bg-blue-900 text-white text-center p-4 mt-8 text-sm">
     © 2025 भारत स्टॉक Live | सभी अधिकार सुरक्षित
   </footer>  <script>
-    const newsAPIKey = "67d561d059ee4d70b69ebcc709bb42d6"; // आपकी API Key यहाँ लगाई गई है
-    const stockNewsUrl = `https://newsapi.org/v2/everything?q=indian+stock+market&language=en&sortBy=publishedAt&apiKey=${newsAPIKey}`;
+    const rssFeeds = [
+      { name: "Moneycontrol Hindi", url: "https://www.moneycontrol.com/rss/MCtopnews.xml" },
+      { name: "Zee Business Hindi", url: "https://zeenews.india.com/hindi/rss/business.xml" },
+      { name: "Live Hindustan Business", url: "https://www.livehindustan.com/rss/business" },
+      { name: "NDTV Profit Hindi", url: "https://hindi.ndtv.com/rss/business" }
+    ];
 
-    async function loadNews() {
-      const res = await fetch(stockNewsUrl);
-      const data = await res.json();
-      const container = document.getElementById("news");
+    async function loadRSSFeeds() {
+      const container = document.getElementById("feeds");
       container.innerHTML = "";
-      data.articles.slice(0, 5).forEach(article => {
-        const item = document.createElement("div");
-        item.innerHTML = `<a href="${article.url}" target="_blank" class="text-blue-600 underline">${article.title}</a>`;
-        container.appendChild(item);
-      });
-    }
 
-    async function loadFiiDii() {
-      // Placeholder (स्क्रैपिंग या API से डेटा लेना होगा)
-      document.getElementById("fii-dii").textContent = `FII: ₹3200 Cr खरीदी\nDII: ₹2200 Cr बिक्री (उदाहरण डेटा)`;
+      rssFeeds.forEach(async feed => {
+        try {
+          const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}`);
+          const data = await res.json();
+
+          if (data.items && data.items.length > 0) {
+            const section = document.createElement("div");
+            section.innerHTML = `<h3 class="text-lg font-bold text-blue-800">${feed.name}</h3>`;
+
+            data.items.slice(0, 5).forEach(item => {
+              const article = document.createElement("div");
+              article.innerHTML = `<a href="${item.link}" target="_blank" class="text-blue-600 hover:underline block">${item.title}</a>`;
+              section.appendChild(article);
+            });
+
+            container.appendChild(section);
+          }
+        } catch (err) {
+          console.error("Feed Error:", err);
+        }
+      });
     }
 
     async function loadGainersLosers() {
-      const url = "https://financialmodelingprep.com/api/v3/stock_market/gainers?apikey=demo";
-      const res = await fetch(url);
-      const gainers = await res.json();
-      const losersRes = await fetch("https://financialmodelingprep.com/api/v3/stock_market/losers?apikey=demo");
-      const losers = await losersRes.json();
+      const gainersList = document.getElementById("gainers");
+      const losersList = document.getElementById("losers");
+      const ticker = document.getElementById("tickerText");
+      try {
+        const res = await fetch("https://latest-stock-price.p.rapidapi.com/price?Indices=NIFTY%2050", {
+          method: "GET",
+          headers: {
+            "X-RapidAPI-Key": "67d561d059ee4d70b69ebcc709bb42d6",
+            "X-RapidAPI-Host": "latest-stock-price.p.rapidapi.com"
+          }
+        });
+        const data = await res.json();
 
-      const gainersEl = document.getElementById("gainers");
-      const losersEl = document.getElementById("losers");
+        const sorted = data.sort((a, b) => b.percentageChange - a.percentageChange);
 
-      gainers.slice(0, 5).forEach(stock => {
-        const li = document.createElement("li");
-        li.textContent = `${stock.name} (${stock.symbol}) +${stock.changesPercentage}`;
-        gainersEl.appendChild(li);
-      });
+        gainersList.innerHTML = "";
+        losersList.innerHTML = "";
 
-      losers.slice(0, 5).forEach(stock => {
-        const li = document.createElement("li");
-        li.textContent = `${stock.name} (${stock.symbol}) ${stock.changesPercentage}`;
-        losersEl.appendChild(li);
-      });
+        sorted.slice(0, 5).forEach(stock => {
+          const li = document.createElement("li");
+          li.textContent = `${stock.symbol} (${stock.lastPrice}) +${stock.percentageChange}%`;
+          gainersList.appendChild(li);
+        });
+
+        sorted.slice(-5).reverse().forEach(stock => {
+          const li = document.createElement("li");
+          li.textContent = `${stock.symbol} (${stock.lastPrice}) ${stock.percentageChange}%`;
+          losersList.appendChild(li);
+        });
+
+        // Update ticker
+        const tickerText = sorted.map(s => `${s.symbol}: ₹${s.lastPrice} (${s.percentageChange > 0 ? '+' : ''}${s.percentageChange}%)`).join(" | ");
+        ticker.textContent = tickerText;
+
+      } catch (err) {
+        console.error("Stock Error:", err);
+        ticker.textContent = "डेटा लोड नहीं हो सका...";
+      }
     }
 
-    function loadChart(symbol = "RELIANCE") {
-      const container = document.getElementById("tradingview");
-      container.innerHTML = `<iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_b&symbol=NSE%3A${symbol}&interval=D&symboledit=1&toolbarbg=f1f3f6&studies=[]&theme=light&style=1&locale=in&enable_publishing=false&allow_symbol_change=true&details=true&hotlist=true" style="width:100%; height:400px;"></iframe>`;
+    function loadChart() {
+      const symbol = document.getElementById("stockDropdown").value;
+      const container = document.getElementById("chartContainer");
+      container.innerHTML = `
+        <iframe src="https://s.tradingview.com/embed-widget/symbol-overview/?locale=hi#symbol=${encodeURIComponent(symbol)}" 
+                height="500" width="100%" frameborder="0"></iframe>`;
     }
 
-    document.getElementById("stockSymbol").addEventListener("change", e => {
-      loadChart(e.target.value);
-    });
-
-    // Auto refresh every 10 min
-    loadNews();
-    loadFiiDii();
+    loadRSSFeeds();
     loadGainersLosers();
-    loadChart();
-    setInterval(() => {
-      loadNews();
-      loadFiiDii();
-      loadGainersLosers();
-    }, 600000);
+    setInterval(loadRSSFeeds, 600000); // हर 10 मिनट में रीफ्रेश
+    setInterval(loadGainersLosers, 600000);
   </script></body>
 </html>
